@@ -1,50 +1,170 @@
+const path = require("path");
+// const UglifyPlugin = require("uglifyjs-webpack-plugin");
 module.exports = {
-// publicPath:process.env.NODE_ENV === 'production' ? '/vue_workspac/aihuhuproject/' : '/',
-
-//基本路径
-    publicPath: './',//默认的'/'是绝对路径，如果不确定在根路径，改成相对路径'./'
-// 输出文件目录
-    outputDir: 'dist',
-    assetsDir:'static',
-    indexPath:'index.html',
-// eslint-loader 是否在保存的时候检查
+    // 基本路径
+    /* 部署生产环境和开发环境下的URL：可对当前环境进行区分，baseUrl 从 Vue CLI 3.3 起已弃用，要使用publicPath */
+    /* baseUrl: process.env.NODE_ENV === 'production' ? './' : '/' */
+    publicPath: process.env.NODE_ENV === "production" ? "./" : "./",
+    // 输出文件目录
+    outputDir: "dist",
+    // eslint-loader 是否在保存的时候检查
     lintOnSave: true,
-// 生产环境是否生成 sourceMap 文件
+    // use the full build with in-browser compiler?
+    // https://vuejs.org/v2/guide/installation.html#Runtime-Compiler-vs-Runtime-only
+    //   compiler: false,
+    runtimeCompiler: true, //关键点在这
+    // 调整内部的 webpack 配置。
+    // 查阅 https://github.com/vuejs/vue-doc-zh-cn/vue-cli/webpack.md
+    // webpack配置
+    // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+    chainWebpack: () => {
+    },
+    configureWebpack: config => {
+        if (process.env.NODE_ENV === "production") {
+            // 为生产环境修改配置...
+            config.mode = "production";
+            // 将每个依赖包打包成单独的js文件
+            var optimization = {
+                runtimeChunk: "single",
+                splitChunks: {
+                    chunks: "all",
+                    maxInitialRequests: Infinity,
+                    minSize: 20000, // 依赖包超过20000bit将被单独打包
+                    cacheGroups: {
+                        vendor: {
+                            test: /[\\/]node_modules[\\/]/,
+                            name(module) {
+                                // get the name. E.g. node_modules/packageName/not/this/part.js
+                                // or node_modules/packageName
+                                const packageName = module.context.match(
+                                    /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                                )[1];
+                                // npm package names are URL-safe, but some servers don't like @ symbols
+                                return `npm.${packageName.replace("@", "")}`;
+                            }
+                        }
+                    }
+                },
+                // minimizer: [
+                //     new UglifyPlugin({
+                //         uglifyOptions: {
+                //             compress: {
+                //                 warnings: false,
+                //                 drop_console: true, // console
+                //                 drop_debugger: false,
+                //                 pure_funcs: ["console.log"] // 移除console
+                //             }
+                //         }
+                //     })
+                // ]
+            };
+            Object.assign(config, {
+                optimization
+            });
+        } else {
+            // 为开发环境修改配置...
+            config.mode = "development";
+            var optimization2 = {
+                runtimeChunk: "single",
+                splitChunks: {
+                    chunks: "all",
+                    maxInitialRequests: Infinity,
+                    minSize: 20000, // 依赖包超过20000bit将被单独打包
+                    cacheGroups: {
+                        vendor: {
+                            test: /[\\/]node_modules[\\/]/,
+                            name(module) {
+                                // get the name. E.g. node_modules/packageName/not/this/part.js
+                                // or node_modules/packageName
+                                const packageName = module.context.match(
+                                    /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                                )[1];
+                                // npm package names are URL-safe, but some servers don't like @ symbols
+                                return `npm.${packageName.replace("@", "")}`;
+                            }
+                        }
+                    }
+                }
+            };
+        }
+        Object.assign(config, {
+            // 开发生产共同配置
+
+            // externals: {
+            //   'vue': 'Vue',
+            //   'element-ui': 'ELEMENT',
+            //   'vue-router': 'VueRouter',
+            //   'vuex': 'Vuex'
+            // } // 防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(用于csdn引入)
+            resolve: {
+                extensions: [".js", ".vue", ".json"], //文件优先解析后缀名顺序
+                alias: {
+                    "@": path.resolve(__dirname, "./src"),
+                    "@c": path.resolve(__dirname, "./src/components"),
+                    "@v": path.resolve(__dirname, "./src/views"),
+                    "@u": path.resolve(__dirname, "./src/utils"),
+                    "@s": path.resolve(__dirname, "./src/service")
+                }, // 别名配置
+                plugins: []
+            },
+            optimization: optimization2
+        });
+    },
+    // vue-loader 配置项
+    // https://vue-loader.vuejs.org/en/options.html
+    // vueLoader: {},
+    // 生产环境是否生成 sourceMap 文件
     productionSourceMap: false,
-// css相关配置
+    // css相关配置
     css: {
-// 是否使用css分离插件 ExtractTextPlugin
-        extract: true,
-// 开启 CSS source maps?
+        // 是否使用css分离插件 ExtractTextPlugin
+        // extract: true, //注释css热更新生效
+        // 开启 CSS source maps?
         sourceMap: false,
-        loaderOptions:{
-            sass:{
+        // css预设器配置项
+        loaderOptions: {
+            sass: {
                 prependData: `@import "./src/style/main.scss";`
             }
+        },
+        // 启用 CSS modules for all css / pre-processor files.
+        modules: false
+    },
+    // use thread-loader for babel & TS in production build
+    // enabled by default if the machine has more than 1 cores
+    parallel: require("os").cpus().length > 1,
+    // 是否启用dll
+    // See https://github.com/vuejs/vue-cli/blob/dev/docs/cli-service.md#dll-mode
+    // dll: false,
+    // PWA 插件相关配置
+    // see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
+    pwa: {},
+    // webpack-dev-server 相关配置
+    devServer: {
+        /* 自动打开浏览器 */
+        open: false,
+        // host: "192.168.0.137",
+        host: "0.0.0.0",
+        port: 3000,
+        https: false,
+        hotOnly: false,
+        /* 使用代理 */
+        // proxy: {
+        //         //     "/api": {
+        //         //         /* 目标代理服务器地址 */
+        //         //         // target: "http://192.168.0.106:8080/",
+        //         //         target: "http://192.168.1.126:8080/", //阳洋
+        //         //         /* 允许跨域 */
+        //         //         changeOrigin: true,
+        //         //         ws: true,
+        //         //         pathRewrite: {
+        //         //             "^/api": ""
+        //         //         }
+        //         //     }
+        //         // },
+        before: () => {
         }
     },
-// webpack-dev-server 相关配置
-    devServer: {
-        open: false,//open 在devServer启动且第一次构建完成时，自动用我们的系统的默认浏览器去打开要开发的网页
-        host: '0.0.0.0',//默认是 localhost。如果你希望服务器外部可访问，指定如下 host: '0.0.0.0'，设置之后之后可以访问ip地址
-        port: 3000,
-        hot:true,//hot配置是否启用模块的热替换功能，devServer的默认行为是在发现源代码被变更后，通过自动刷新整个页面来做到事实预览，开启hot后，将在不刷新整个页面的情况下通过新模块替换老模块来做到实时预览。
-        https: false,
-        hotOnly: false,// hot 和 hotOnly 的区别是在某些模块不支持热更新的情况下，前者会自动刷新页面，后者不会刷新页面，而是在控制台输出热更新失败
-        // proxy: {
-        //     '/': {
-        //         target: 'http://xxxx:8080', //目标接口域名
-        //         secure: false, //false为http访问，true为https访问
-        //         changeOrigin: true, //是否跨域
-        //         pathRewrite: {
-        //             '^/': '/' //重写接口
-        //         }
-        //     }
-        // }, // 设置代理
-        before: app => {}
-    },
-// 第三方插件配置
-    pluginOptions: {
-// ...
-    }
+    // 第三方插件配置
+    pluginOptions: {}
 };
