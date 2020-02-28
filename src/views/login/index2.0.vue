@@ -34,7 +34,7 @@
                             <el-input v-model.number="ruleForm.age" maxlength="6" minlength="6"></el-input>
                         </el-col>
                         <el-col :span="9">
-                            <el-button type="success" style="width: 100%" @click="getMsgs">获取验证码</el-button>
+                            <el-button type="success" style="width: 100%">获取验证码</el-button>
                         </el-col>
                     </el-row>
                 </el-form-item>
@@ -48,19 +48,25 @@
 
 <script>
     import {filter, validateEmail, validatePwd, validateVcode} from "@u/validate";
-    import {reactive, ref} from '@vue/composition-api';
-    import {getMsg} from '@/api/login'
-    import axios from 'axios';
 
     export default {
         name: 'login',
-        //放置data中的数据，生命周期，自定义函数
-        setup(props, {refs}) {
-
+        data() {
+            //验证用户名
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入用户名'));
+                } else if (validateEmail(value)) {
+                    console.log(value);
+                    callback(new Error('请注意输入格式，不能包含特殊字符'));
+                } else {
+                    callback();
+                }
+            };
             //验证密码
-            let validatePass2 = (rule, value, callback) => {
-                ruleForm.password = filter(value);
-                value = ruleForm.password;
+            var validatePass2 = (rule, value, callback) => {
+                this.ruleForm.password = filter(value);
+                value = this.ruleForm.password;
                 console.log(value);
                 if (value === '') {
                     callback(new Error('请输入密码'));
@@ -72,13 +78,13 @@
             };
 
             //验证重复密码
-            let validatePass3 = (rule, value, callback) => {
-                ruleForm.passwords = filter(value);
-                value = ruleForm.passwords;
+            var validatePass3 = (rule, value, callback) => {
+                this.ruleForm.passwords = filter(value);
+                value = this.ruleForm.passwords;
                 console.log(value);
                 if (value === '') {
                     callback(new Error('请输入密码'));
-                } else if (value !== ruleForm.password) {
+                } else if (value !== this.ruleForm.password) {
                     callback(new Error("重复密码不正确"));
                 } else {
                     callback();
@@ -86,7 +92,7 @@
             };
 
             //验证验证码
-            let checkAge = (rule, value, callback) => {
+            var checkAge = (rule, value, callback) => {
                 if (!value) {
                     return callback(new Error('验证码不能为空'));
                 } else if (validateVcode(value)) {
@@ -96,59 +102,48 @@
                 }
             };
 
-            //验证用户名
-            let validatePass = (rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请输入用户名'));
-                } else if (validateEmail(value)) {
-                    console.log(value);
-                    callback(new Error('请注意输入格式，不能包含特殊字符'));
-                } else {
-                    callback();
+            return {
+                menuTab: [
+                    {'txt': '登录', current: true,type:'login'},
+                    {'txt': '注册', current: false,type:'register'}
+                ],
+                type:'login',
+                ruleForm: {
+                    username: '',
+                    password: '',
+                    passwords: '',
+                    age: ''
+                },
+                rules: {
+                    username: [
+                        {validator: validatePass, trigger: 'blur'}
+                    ],
+                    password: [
+                        {validator: validatePass2, trigger: 'blur'}
+                    ],
+                    passwords: [
+                        {validator: validatePass3, trigger: 'blur'}
+                    ],
+                    age: [
+                        {validator: checkAge, trigger: 'blur'}
+                    ]
                 }
             };
-
-            const menuTab = reactive([
-                {'txt': '登录', current: true, type: 'login'},
-                {'txt': '注册', current: false, type: 'register'}
-            ]);
-            //表单数据
-            const ruleForm = reactive({
-                username: '',
-                password: '',
-                passwords: '',
-                age: ''
-            });
-
-            //表单验证
-            const rules = reactive({
-                username: [
-                    {validator: validatePass, trigger: 'blur'}
-                ],
-                password: [
-                    {validator: validatePass2, trigger: 'blur'}
-                ],
-                passwords: [
-                    {validator: validatePass3, trigger: 'blur'}
-                ],
-                age: [
-                    {validator: checkAge, trigger: 'blur'}
-                ]
-            });
-
-            //type.value
-            const type = ref('login');
-
-            const toggleMenu = (data => {
-                menuTab.forEach((item) => {
+        },
+        created() {
+        },
+        mounted() {
+        },
+        methods: {
+            toggleMenu(data) {
+                this.menuTab.forEach((item) => {
                     item.current = false;
                 })
-                type.value = data.type;
+                this.type=data.type;
                 return data.current = true;
-            });
-
-            const submitForm = ((formName) => {
-                refs[formName].validate((valid) => {
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
                     if (valid) {
                         alert('submit!');
                     } else {
@@ -156,25 +151,9 @@
                         return false;
                     }
                 });
-            });
-
-            //获取验证码
-            const getMsgs=(()=>{
-                getMsg();
-            });
-
-            return {
-                menuTab,
-                type,
-                ruleForm,
-                rules,
-                toggleMenu,
-                submitForm,
-                getMsgs,
-            }
+            },
         }
     }
-
 
 </script>
 
@@ -222,7 +201,6 @@
 
             .item-form {
                 margin-top: 13px;
-
                 .el-row {
                     margin-bottom: 20px;
 
