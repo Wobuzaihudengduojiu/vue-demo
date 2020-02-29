@@ -1,9 +1,19 @@
 import Mock from "mockjs";
 
-Mock.mock('/dev-api/user/getUser','post',{
-    'user|10':[{
-        id:'@id',
-        name:'@first',
-        age: '@integer(1,100)',
-    }]
+Mock.mock('/user/getUser','post',{
+    'user|10':
+        [{
+            id:'@id',
+            name:'@first',
+            age: '@integer(1,100)',
+        }],
+    'status':200
 });
+
+Mock.mock('/user/login','post',{
+    'status':200,
+})
+
+Mock.mock('/user/register','post',{
+    'status':200,
+})

@@ -16,8 +16,14 @@ request.interceptors.request.use(function (config) {
 
 // Add a response interceptor
 request.interceptors.response.use(function (response) {
+
+    const res = response.data;
+
+    // 如果返回的状态不是200 就主动报错
+    if(res.status != 200){
+        return Promise.reject(res.message || 'error')
+    }
     // Do something with response data
-    console.log(response);
     return response;
 }, function (error) {
     // Do something with response error
