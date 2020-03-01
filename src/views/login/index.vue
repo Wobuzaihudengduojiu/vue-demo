@@ -53,7 +53,8 @@
 <script>
     import {filter, validateEmail, validatePwd, validateVcode} from "@u/validate";
     import {reactive, ref} from '@vue/composition-api';
-    import {getMsg, register, login} from '@/api/login'
+    import {getMsg, register, login} from '@/api/login';
+    import sha1 from 'js-sha1'
 
     export default {
         name: 'login',
@@ -156,6 +157,7 @@
                 })
                 type.value = data.type;
                 refs.ruleForm.resetFields();
+                clearCountDown();
                 return data.current = true;
             });
 
@@ -164,15 +166,33 @@
                 refs[formName].validate((valid) => {
                     if (valid) {
                         if (type.value === 'login') {
-                            login(ruleForm).then((resp) => {
-                                console.log(resp.data);
+                            let data = {
+                                username: ruleForm.username,
+                                password: sha1(ruleForm.password),
+                                age: ruleForm.age,
+                            }
+
+
+                            login(data).then((resp) => {
+
+                                if(resp.data.status==200){
+                                    root.$router.push('/index');
+                                }
+
                             }).catch((error) => {
                                 console.log(error);
                             });
                         } else {
-                            register(ruleForm).then((resp) => {
 
-                                if(resp.data.status===200){
+                            let data = {
+                                username: ruleForm.username,
+                                password: sha1(ruleForm.password),
+                                age: ruleForm.age,
+                            }
+
+                            register(data).then((resp) => {
+
+                                if (resp.data.status === 200) {
                                     root.$message({
                                         message: '注册成功',
                                         type: 'success'
@@ -228,17 +248,17 @@
 
             });
 
-            const clearCountDown=(()=>{
+            const clearCountDown = (() => {
                 clearInterval(time.value);
-                codeValue.value='发送验证码';
-                codeBtn.value=false;
-                loginBtn.value=true;
+                codeValue.value = '发送验证码';
+                codeBtn.value = false;
+                loginBtn.value = true;
             })
 
             const countDown = ((number) => {
 
                 //清理定时器
-                if(time.value==null){
+                if (time.value == null) {
                     clearInterval(time.value);
                 }
 
