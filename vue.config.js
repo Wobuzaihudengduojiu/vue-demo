@@ -17,7 +17,27 @@ module.exports = {
     // 查阅 https://github.com/vuejs/vue-doc-zh-cn/vue-cli/webpack.md
     // webpack配置
     // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
-    chainWebpack: () => {
+    chainWebpack: (config) => {
+        const svgRule = config.module.rule('svg');
+        svgRule.uses.clear();
+        svgRule
+            .use('babel-loader')
+            .loader('babel-loader')
+            .end()
+            .use('vue-svg-loader')
+            .loader('vue-svg-loader')
+            .options({
+                svgo: {
+                    plugins: [
+                        { removeDoctype: true },
+                        { removeComments: true },
+                        { removeViewBox: false }
+                    ],
+                    removeViewBox: false,
+                },
+            })
+            .end();
+
     },
     configureWebpack: config => {
         if (process.env.NODE_ENV === "production") {
@@ -90,6 +110,7 @@ module.exports = {
         Object.assign(config, {
             // 开发生产共同配置
 
+
             // externals: {
             //   'vue': 'Vue',
             //   'element-ui': 'ELEMENT',
@@ -97,8 +118,12 @@ module.exports = {
             //   'vuex': 'Vuex'
             // } // 防止将某些 import 的包(package)打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖(用于csdn引入)
             resolve: {
-                extensions: [".js", ".vue", ".json"], //文件优先解析后缀名顺序
+                extensions: [".js", ".vue", ".json"], //文件优先解析后缀名顺序,
+
                 alias: {
+
+                    //运行模式无法使用template
+                    "vue": 'vue/dist/vue.js',
                     "@": path.resolve(__dirname, "./src"),
                     "@c": path.resolve(__dirname, "./src/components"),
                     "@v": path.resolve(__dirname, "./src/views"),
@@ -150,18 +175,18 @@ module.exports = {
         hotOnly: false,
         /* 使用代理 */
         proxy: {
-                    "/api": {
-                        /* 目标代理服务器地址 */
-                        // target: "http://192.168.0.106:8080/",
-                        target: "http://localhost:3000",
-                        /* 允许跨域 */
-                        changeOrigin: true,
-                        ws: true,
-                        pathRewrite: {
-                            "^/api": ""
-                        }
-                    }
-                },
+            "/api": {
+                /* 目标代理服务器地址 */
+                // target: "http://192.168.0.106:8080/",
+                target: "http://localhost:3000",
+                /* 允许跨域 */
+                changeOrigin: true,
+                ws: true,
+                pathRewrite: {
+                    "^/api": ""
+                }
+            }
+        },
         before: () => {
 
         }

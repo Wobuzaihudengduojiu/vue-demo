@@ -6,9 +6,19 @@ import store from "./store";
 import 'element-ui/lib/theme-chalk/index.css';
 import VueCompositonApi from '@vue/composition-api';
 
+//引入svg
+import './icons'
+
 if (process.env.NODE_ENV === 'development') {
   import('../mock');
 }
+
+
+
+
+
+
+
 
 Vue.config.productionTip = false;
 

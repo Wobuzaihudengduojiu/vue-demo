@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Layout from '@v/layout';
 
 Vue.use(VueRouter);
 
@@ -27,8 +28,9 @@ const routes = [
         redirect:'index/1',
         meta:{
             name:'控制台',
+            icon:'el-icon-menu',
         },
-        component:()=>import("@v/layout/index.vue"),
+        component:Layout,
         children:[
             {
                 path:'/index/1',
@@ -45,8 +47,9 @@ const routes = [
         name:'News',
         meta:{
             name:'信息管理',
+            icon:'el-icon-s-opportunity',
         },
-        component:()=>import("@v/layout/index.vue"),
+        component:Layout,
         children:[
             {
                 path:'/newsIndex',
@@ -71,8 +74,9 @@ const routes = [
         name:'User',
         meta:{
             name:'用户管理',
+            icon:'el-icon-s-data',
         },
-        component:()=>import("@v/layout/index.vue"),
+        component:Layout,
         children:[
             {
                 path:'/userIndex',

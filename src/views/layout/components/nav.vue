@@ -8,7 +8,7 @@
             <template v-for="(item,index) in routers">
                 <el-submenu v-if="!item.hidden" :key="item.id" :index="index.toString()">
                     <template slot="title">
-                        <i class="el-icon-location"></i>
+                        <i :class="item.meta.icon"></i>
                         <span slot="title">{{item.meta.name}}</span>
                     </template>
                     <el-menu-item-group>
@@ -21,6 +21,8 @@
             </template>
 
         </el-menu>
+
+        <svg-icon icon-class="caidan" class-name="caidan"/>
 
     </div>
 
