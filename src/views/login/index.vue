@@ -53,7 +53,7 @@
 <script>
     import {filter, validateEmail, validatePwd, validateVcode} from "@u/validate";
     import {reactive, ref} from '@vue/composition-api';
-    import {getMsg, register, login} from '@/api/login';
+    import {getMsg, register} from '@/api/login';
     import sha1 from 'js-sha1'
 
     export default {
@@ -172,10 +172,9 @@
                                 age: ruleForm.age,
                             }
 
+                            root.$store.dispatch('logins/Login', data).then((resp) => {
 
-                            login(data).then((resp) => {
-
-                                if(resp.data.status==200){
+                                if (resp.data.status == 200) {
                                     root.$router.push('/index');
                                 }
 
@@ -235,7 +234,6 @@
 
                 setTimeout(() => {
                     getMsg({username: ruleForm.username}).then((rep) => {
-
                             loginBtn.value = false;
                             countDown(10);
                         }
@@ -244,8 +242,6 @@
                     });
 
                 }, 1000)
-
-
             });
 
             const clearCountDown = (() => {
@@ -256,7 +252,6 @@
             })
 
             const countDown = ((number) => {
-
                 //清理定时器
                 if (time.value == null) {
                     clearInterval(time.value);

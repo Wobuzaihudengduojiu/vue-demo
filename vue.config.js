@@ -1,5 +1,11 @@
 const path = require("path");
+
 // const UglifyPlugin = require("uglifyjs-webpack-plugin");
+function resolve(dir) {
+    // 路径可能与你的项目不同
+    return path.join(__dirname, dir)
+}
+
 module.exports = {
     // 基本路径
     /* 部署生产环境和开发环境下的URL：可对当前环境进行区分，baseUrl 从 Vue CLI 3.3 起已弃用，要使用publicPath */
@@ -17,26 +23,27 @@ module.exports = {
     // 查阅 https://github.com/vuejs/vue-doc-zh-cn/vue-cli/webpack.md
     // webpack配置
     // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
+
+
     chainWebpack: (config) => {
-        const svgRule = config.module.rule('svg');
-        svgRule.uses.clear();
-        svgRule
-            .use('babel-loader')
-            .loader('babel-loader')
-            .end()
-            .use('vue-svg-loader')
-            .loader('vue-svg-loader')
-            .options({
-                svgo: {
-                    plugins: [
-                        { removeDoctype: true },
-                        { removeComments: true },
-                        { removeViewBox: false }
-                    ],
-                    removeViewBox: false,
-                },
-            })
-            .end();
+
+        config.module.rule('svg').uses.clear()
+
+        config.module
+            .rule('svg')
+            .uses.clear(),
+            config.module
+                .rule('svg1')
+                .test(/\.svg$/)
+                .use('svg-sprite')
+                .loader('svg-sprite-loader')
+                .options({
+                    symbolId: 'icon-[name]'
+                })
+                .end()
+                .include
+                .add(resolve('src/icons'))
+                .end()
 
     },
     configureWebpack: config => {
@@ -128,7 +135,7 @@ module.exports = {
                     "@c": path.resolve(__dirname, "./src/components"),
                     "@v": path.resolve(__dirname, "./src/views"),
                     "@u": path.resolve(__dirname, "./src/utils"),
-                    "@s": path.resolve(__dirname, "./src/service")
+                    "@s": path.resolve(__dirname, "./src/service"),
                 }, // 别名配置
                 plugins: []
             },

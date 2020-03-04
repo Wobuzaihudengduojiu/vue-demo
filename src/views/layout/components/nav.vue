@@ -1,14 +1,17 @@
 <template>
 
     <div id="nav-wrap">
+        <h1 class="logo">
+            <img src="@/assets/logo.png">
+        </h1>
+
         <el-menu default-active="1-4-1" class="el-menu-vertical-demo" background-color="transparent" text-color="#fff"
-                 active-text-color="#fff" @open="handleOpen" @close="handleClose"
-                 :collapse="isCollapse" router>
+                 active-text-color="#fff" :collapse="isCollapse" router>
 
             <template v-for="(item,index) in routers">
                 <el-submenu v-if="!item.hidden" :key="item.id" :index="index.toString()">
                     <template slot="title">
-                        <i :class="item.meta.icon"></i>
+                        <svg-icon :icon-class="item.meta.icon" :class-name="item.meta.icon"/>
                         <span slot="title">{{item.meta.name}}</span>
                     </template>
                     <el-menu-item-group>
@@ -19,10 +22,7 @@
                     </el-menu-item-group>
                 </el-submenu>
             </template>
-
         </el-menu>
-
-        <svg-icon icon-class="caidan" class-name="caidan"/>
 
     </div>
 
@@ -30,27 +30,19 @@
 
 <script>
 
-    import {reactive, ref} from '@vue/composition-api';
+    import {reactive, ref, computed} from '@vue/composition-api';
 
     export default {
         name: 'navMenu',
         setup(props, {root}) {
 
-            const isCollapse = ref(false);
-            const routers = reactive(root.$router.options.routes)
+            // const isCollapse = ref(false);
+            const routers = reactive(root.$router.options.routes);
 
-            const handleOpen = ((key, keyPath) => {
-                console.log(key, keyPath);
-            });
-
-            const handleClose = ((key, keyPath) => {
-                console.log(key, keyPath);
-            });
+            const isCollapse = computed(() => root.$store.state.logins.isCollapse);
 
             return {
                 isCollapse,
-                handleOpen,
-                handleClose,
                 routers
             };
 
@@ -64,13 +56,27 @@
 <style lang="scss" scoped>
     @import "../../../style/config.scss";
 
+    .logo {
+
+        img {
+            height: 90px;
+            width: 90px;
+            margin-left: 60px;
+        }
+    }
+
     #nav-wrap {
         position: fixed;
         top: 0;
         left: 0;
-        width: $navMenu;
         height: 100vh;
         background-color: #344a5f;
+        @include webkit(transition,all .3s ease 0s);
+
+        svg {
+            font-size: 20px;
+            margin-right: 15px;
+        }
 
         .el-menu-vertical-demo:not(.el-menu--collapse) {
             width: 250px;
@@ -78,5 +84,28 @@
         }
     }
 
+    .open {
+        #nav-wrap {
+            width: $navMenu;
+        }
+
+        .logo img {
+            margin-left: 60px;
+            @include webkit(transition,all .3s ease 0s);
+        }
+    }
+
+    .close {
+        #nav-wrap {
+            width: 64px;
+        }
+
+        .logo img {
+            margin-left: 4px;
+            height: 70%;
+            width: 80%;
+            @include webkit(transition,all .3s ease 0s);
+        }
+    }
 
 </style>

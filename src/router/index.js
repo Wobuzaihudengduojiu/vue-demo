@@ -28,7 +28,7 @@ const routes = [
         redirect:'index/1',
         meta:{
             name:'控制台',
-            icon:'el-icon-menu',
+            icon:'order',
         },
         component:Layout,
         children:[
@@ -47,7 +47,7 @@ const routes = [
         name:'News',
         meta:{
             name:'信息管理',
-            icon:'el-icon-s-opportunity',
+            icon:'credits',
         },
         component:Layout,
         children:[
@@ -74,7 +74,7 @@ const routes = [
         name:'User',
         meta:{
             name:'用户管理',
-            icon:'el-icon-s-data',
+            icon:'filter',
         },
         component:Layout,
         children:[

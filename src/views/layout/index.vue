@@ -1,5 +1,5 @@
 <template>
-    <div id="layout">
+    <div id="layout" :class="menuStates?'close':'open'">
         <LayoutNav/>
         <LayoutHeader/>
         <LayoutMain/>
@@ -8,14 +8,20 @@
 
 <script>
     import LayoutHeader from './components/header';
-    import LayoutNav from  './components/nav';
+    import LayoutNav from './components/nav';
     import LayoutMain from './components/main';
+    import {computed} from '@vue/composition-api';
 
     export default {
-        name:'layout',
-        components:{LayoutHeader,LayoutNav,LayoutMain},
-        setup(){
+        name: 'layout',
+        components: {LayoutHeader, LayoutNav, LayoutMain},
+        setup(props, {root}) {
 
+            const menuStates = computed(() => root.$store.state.logins.isCollapse);
+
+            return {
+                menuStates,
+            }
         }
 
     }
@@ -23,11 +29,11 @@
 </script>
 
 <style lang="scss" scoped>
-    #layout{
+    @import "../../style/config.scss";
 
+    #layout {
         background-color: #f7f7f7;
     }
-
 
 
 </style>
