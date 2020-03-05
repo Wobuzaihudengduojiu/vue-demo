@@ -8,33 +8,54 @@
             <div class="pull-left">
                 <img :src="imgUrls">
             </div>
-            <div class="user-info pull-left">geyx</div>
-            <div class="pull-right header-icon">
-                <svg-icon icon-class="close" class-name="close"></svg-icon>
+            <div class="user-info pull-left">{{username}}</div>
+
+            <div class="pull-right header-icon ">
+                <el-popconfirm title="确定退出登录？" @onConfirm="turnOff">
+                    <el-button slot="reference">
+                        <svg-icon icon-class="close" class-name="close"></svg-icon>
+                    </el-button>
+                </el-popconfirm>
             </div>
         </div>
+
 
     </div>
 </template>
 
 <script>
 
-    import {ref} from '@vue/composition-api';
+    import {ref, computed} from '@vue/composition-api';
     import imageUrl from '@/assets/user.jpg'
 
     export default {
         name: 'Header',
-        setup(props,{root}) {
+        setup(props, {root}) {
 
             const imgUrls = ref(imageUrl);
 
-            const navMenuStatus=(()=>{
+            const username = computed(() => root.$store.state.logins.username);
+
+            const navMenuStatus = (() => {
                 root.$store.commit('logins/SET_Collapse');
             })
 
+
+            const turnOff = (() => {
+
+                console.log('asd');
+                root.$store.dispatch('logins/exit').then(() => {
+                    root.$router.push('/login');
+                });
+
+            })
+
+
             return {
                 imgUrls,
-                navMenuStatus
+                navMenuStatus,
+                username,
+                turnOff,
             }
         }
     }
@@ -50,11 +71,12 @@
         right: 0;
         height: 75px;
         background-color: #fff;
-        @include webkit(transition,all .3s ease 0s);
+        @include webkit(transition, all .3s ease 0s);
         line-height: 75px;
 
 
     }
+
 
     .pull-left {
         float: left;
@@ -71,7 +93,8 @@
         padding-right: 40px;
 
     }
-    .open{
+
+    .open {
 
     }
 
@@ -79,30 +102,33 @@
         width: 30px;
         height: 30px;
         margin-right: 20px;
-        border-radius:100%;
+        border-radius: 100%;
         margin-bottom: -10px;
 
     }
 
     .header-icon {
-        padding: 0 32px;
+        padding: 0 15px;
 
         svg {
             font-size: 25px;
             margin-bottom: -8px;
             cursor: pointer;
+
         }
     }
 
-    .open{
+    .open {
         #header-warp {
             left: 250px;
         }
     }
-    .close{
-        #header-warp{
-            left:64px;
+
+    .close {
+        #header-warp {
+            left: 64px;
         }
     }
+
 
 </style>

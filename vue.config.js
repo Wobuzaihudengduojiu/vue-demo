@@ -128,7 +128,6 @@ module.exports = {
                 extensions: [".js", ".vue", ".json"], //文件优先解析后缀名顺序,
 
                 alias: {
-
                     //运行模式无法使用template
                     "vue": 'vue/dist/vue.js',
                     "@": path.resolve(__dirname, "./src"),

@@ -174,12 +174,13 @@
 
                             root.$store.dispatch('logins/Login', data).then((resp) => {
 
+                                console.log(resp.data)
                                 if (resp.data.status == 200) {
                                     root.$router.push('/index');
                                 }
 
                             }).catch((error) => {
-                                console.log(error);
+                                console.log("登陆发生错误");
                             });
                         } else {
 
@@ -201,7 +202,7 @@
                                     clearCountDown();
                                 }
                             }).catch((error) => {
-                                $message.error('注册失败');
+                                root.$message.error('注册失败');
                             });
                         }
                     } else {
