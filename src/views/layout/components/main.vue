@@ -5,7 +5,6 @@
                 <router-view/>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -25,7 +24,7 @@
         top: 95px;
         right: 0;
         height: 100%;
-        @include webkit(transition,all .3s ease 0s);
+        @include webkit(transition, all .3s ease 0s);
         border: 30px #f7f7f7;
         border-bottom: none;
         -webkit-box-shadow: 0 3px 16px 0 rgba(0, 0, 0, .1);
@@ -41,12 +40,13 @@
     }
 
     .open {
-        #main-wrap{
+        #main-wrap {
             left: 270px;
         }
     }
-    .close{
-        #main-wrap{
+
+    .close {
+        #main-wrap {
             left: 82px;
         }
     }

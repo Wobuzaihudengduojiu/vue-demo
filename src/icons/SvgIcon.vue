@@ -26,7 +26,6 @@
         },
         setup(props, {refs, root},) {
 
-
             const iconName = computed(() => `#icon-${props.iconClass}`);
             const svgClass = computed(() => {
                 if (props.className) {

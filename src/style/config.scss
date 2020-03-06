@@ -1,9 +1,7 @@
-
-
 //菜单宽度
-$navMenu:250px;
+$navMenu: 250px;
 
-$secColor:#f56c56c;
+$secColor: #f56c56c;
 
 @mixin webkit($type,$value) {
   -webkit-#{$type}: $value;
@@ -11,3 +9,17 @@ $secColor:#f56c56c;
   -o-#{$type}: $value;
   -ms-#{$type}: $value;
 }
+
+@mixin labelDom($align,$width,$line-height:"normal") {
+  label {
+    float: left;
+    line-height: $line-height+px;
+    width: $width+px;
+    text-align: $align;
+  }
+
+  .wrap-content {
+    margin-left: $width+px;
+  }
+}
+
