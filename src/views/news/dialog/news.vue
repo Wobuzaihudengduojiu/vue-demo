@@ -29,8 +29,8 @@
 
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="danger" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button @click="close">取 消</el-button>
+            <el-button type="danger" @click="close">确 定</el-button>
         </div>
     </el-dialog>
 </template>
@@ -57,9 +57,6 @@
 
             //弹框
             const formLabelWidth = ref('120px');
-            const dialogFormVisible = (()=>{
-
-            });
 
             const addInfo = reactive({
                 type: '',
@@ -81,7 +78,6 @@
             const option = computed(() => props.options);
 
             return {
-                dialogFormVisible,
                 addInfo,
                 formLabelWidth,
                 flag_info,
@@ -94,6 +90,7 @@
 
 <style lang="scss" scoped>
 
+    @import "../../../style/config.scss";
 
 </style>
 

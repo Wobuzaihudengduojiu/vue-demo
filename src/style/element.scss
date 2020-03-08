@@ -41,3 +41,11 @@ li.el-submenu {
     background-color: $secColor !important;
   }
 }
+
+.dialog-footer {
+  text-align: center;
+
+  .el-button {
+    width: 150px;
+  }
+}

@@ -70,13 +70,13 @@
                     <template slot-scope="scope">
                         <el-button
                                 size="mini"
-                                type="danger"
-                                @click="handleDelete(scope.$index, scope.row)">删除
+                                type="success"
+                                @click="handleEdit(scope.$index, scope.row)">编辑
                         </el-button>
                         <el-button
                                 size="mini"
-                                type="success"
-                                @click="handleEdit(scope.$index, scope.row)">编辑
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)">删除
                         </el-button>
                     </template>
                 </el-table-column>
@@ -85,7 +85,7 @@
         <div class="page-content">
             <el-row>
                 <el-col :span="4">
-                    <el-button type="danger">批量删除</el-button>
+                    <el-button type="danger" @click="deleteAll">批量删除</el-button>
                 </el-col>
                 <el-col :span="11" :offset="7">
                     <el-pagination
@@ -108,15 +108,16 @@
 
 <script>
 
-    import {ref, reactive, watch} from '@vue/composition-api';
+    import {ref, reactive,} from '@vue/composition-api';
     import newsDialog from './dialog/news';
+    import {global} from '@u/global';
 
     export default {
         name: 'newsIndex',
         components: {
             newsDialog,
         },
-        setup(props) {
+        setup(props, {root}) {
 
             const pickerOptions = reactive({
                 shortcuts: [{
@@ -199,9 +200,28 @@
             const handleEdit = ((index, row) => {
                 console.log(index, row);
             });
+
+            const {confirm} = global();
+
             const handleDelete = ((index, row) => {
+                confirm({
+                    text: '确认是否删除该条记录？',
+                    fn: confirmDelete
+                });
                 console.log(index, row);
             });
+
+            const deleteAll = (() => {
+                confirm({
+                    text: '确认删除已选中记录？',
+                    fn: confirmDelete
+                })
+            });
+
+            const confirmDelete = (() => {
+
+            })
+
 
             const handleSizeChange = ((val) => {
                 console.log(`每页 ${val} 条`);
@@ -210,11 +230,13 @@
                 console.log(`当前页: ${val}`);
             });
 
+
+            //对话框
             const dialogInfo = ref(false);
 
             const close = (() => {
                 dialogInfo.value = false;
-            })
+            });
 
 
             return {
@@ -232,7 +254,8 @@
                 handleSizeChange,
                 handleCurrentChange,
                 dialogInfo,
-                close
+                close,
+                deleteAll
             }
         }
     }
@@ -242,9 +265,6 @@
 
     @import "../../style/config";
 
-    .dialog-footer {
-        text-align: center;
-    }
 
     .table-content {
         padding-top: 15px;
