@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="新增" :visible.sync="flag_info" @opened=openDialog
+    <el-dialog title="修改" :visible.sync="flag_info" @opened=openDialog
                :modal-append-to-body="false"
                width="550px"
                @close="close">
@@ -40,7 +40,7 @@
     import {reactive, ref, watch, computed} from "@vue/composition-api";
 
     export default {
-        name: 'newsDialog',
+        name: 'editDialog',
         //单向数据流 父->子 //不能反向修改
         props: {
             flag: {

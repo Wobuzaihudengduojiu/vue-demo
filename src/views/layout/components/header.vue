@@ -94,9 +94,6 @@
 
     }
 
-    .open {
-
-    }
 
     img {
         width: 30px;

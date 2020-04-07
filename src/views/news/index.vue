@@ -7,10 +7,10 @@
                     <div class="wrap-content">
                         <el-select v-model="value" placeholder="请选择">
                             <el-option style="width: 100%"
-                                       v-for="item in options"
+                                       v-for="item in options.category"
                                        :key="item.value"
                                        :label="item.label"
-                                       :value="item.value">
+                                       :value="item.category_name">
                             </el-option>
                         </el-select>
                     </div>
@@ -60,11 +60,13 @@
         </el-row>
 
         <div class="table-content">
-            <el-table :data="tableData" border style="width: 100%">
+            <el-table :data="tableData" border style="width: 100%" v-loading="loading"
+                      @selection-change="handleSelectionChange">>
                 <el-table-column type="selection" width="45" align="center"></el-table-column>
                 <el-table-column prop="title" label="标题" width="430" align="center"></el-table-column>
                 <el-table-column prop="category" label="类型" align="center" width="130"></el-table-column>
-                <el-table-column prop="date" label="日期" align="center" width="237"></el-table-column>
+                <el-table-column prop="date" label="日期" align="center" width="237"
+                                 :formatter="toData"></el-table-column>
                 <el-table-column prop="user" label="管理员" align="center" width="115"></el-table-column>
                 <el-table-column prop="opera" label="操作" align="center">
                     <template slot-scope="scope">
@@ -73,6 +75,13 @@
                                 type="success"
                                 @click="handleEdit(scope.$index, scope.row)">编辑
                         </el-button>
+<!--                        <router-link :to="{name:'InfoCategory',query:{id:scope.row}}">-->
+                            <el-button style="margin: 0 10px"
+                                size="mini"
+                                type="primary"
+                                @click="handleEditInfo(scope.row)">编辑详情
+                            </el-button>
+<!--                        </router-link>-->
                         <el-button
                                 size="mini"
                                 type="danger"
@@ -101,21 +110,25 @@
         </div>
 
         <div class="notice-wrap">
-            <newsDialog :flag="dialogInfo" :options="options" @close="close"/>
+            <newsDialog :flag="dialogInfo" :options="options.category" @close="close"/>
+            <editDialog :flag="edit_dialogInfo" :options="options.category" @close="close"/>
         </div>
     </div>
 </template>
 
 <script>
 
-    import {ref, reactive,} from '@vue/composition-api';
+    import {ref, reactive, watch, onMounted} from '@vue/composition-api';
     import newsDialog from './dialog/news';
+    import editDialog from "./dialog/edit";
     import {global} from '@u/global';
+    // import {common} from '@/api/common';
 
     export default {
         name: 'newsIndex',
         components: {
             newsDialog,
+            editDialog
         },
         setup(props, {root}) {
 
@@ -147,7 +160,6 @@
                 }]
             });
 
-
             //开始日期和结束日期
             const value1 = ref('');
             const value2 = ref('');
@@ -168,29 +180,27 @@
 
             const value = ref('');
 
-            const options = reactive([{
-                value: 1,
-                label: '国内信息'
-            }, {
-                value: 2,
-                label: '国际信息'
-            }, {
-                value: 3,
-                label: '行业信息'
-            }]);
+            const options = reactive({
+                category: []
+            });
+
+            const loading = ref(false);
 
 
             const tableData = reactive([{
+                id:1,
                 title: '上海市普陀区金沙江路 1518 弄',
                 date: '2016-05-02',
                 category: '王小虎',
                 user: '管理员',
             }, {
+                id:2,
                 title: '上海市普陀区金沙江路 1518 弄',
                 date: '2016-05-04',
                 category: '王小虎',
                 user: '管理员',
             }, {
+                id:3,
                 title: '上海市普陀区金沙江路 1518 弄',
                 date: '2016-05-01',
                 category: '王小虎',
@@ -198,7 +208,9 @@
             }]);
 
             const handleEdit = ((index, row) => {
+                edit_dialogInfo.value = true;
                 console.log(index, row);
+                edit_dialogInfo.value = false;
             });
 
             const {confirm} = global();
@@ -218,9 +230,9 @@
                 })
             });
 
-            const confirmDelete = (() => {
+            const confirmDelete = ((val) => {
 
-            })
+            });
 
 
             const handleSizeChange = ((val) => {
@@ -234,9 +246,64 @@
             //对话框
             const dialogInfo = ref(false);
 
+            const edit_dialogInfo = ref(false);
+
             const close = (() => {
                 dialogInfo.value = false;
             });
+
+
+            // const {getCategoryInfo, categorys} = common();
+
+            onMounted(() => {
+                root.$store.dispatch('news/getCategoryInfo').then((resp) => {
+                    options.category = resp.data.data.category;
+                }).catch((error) => {
+
+                });
+            });
+
+            const toData = (row, column, rowIndex, columnIndex) => {
+                // console.log(row)
+            };
+
+            const handleSelectionChange = (val) => {
+                multipleSelection.data = val;
+                console.log(val);
+            };
+
+            const multipleSelection = reactive({
+                data: []
+            });
+
+            const handleEditInfo = (data) => {
+
+                //先存数据在跳转页面
+
+                console.log(data.title)
+
+                root.$store.commit('categoryInfo/UPDATE_STATE_VALUE',{
+                    id:{
+                        value: data.id,
+                        session:true,
+                        sessionKey:'infoId'
+                    },
+                    title:{
+                        value:data.title,
+                        session:true,
+                        sessionKey:'infoTitle'
+                    }
+                });
+
+                root.$router.push({
+                    path:"/infoCategory",
+                    params:{
+                        infoId:data.id,
+                        infoTitle:data.title,
+                    }
+                })
+
+            };
 
 
             return {
@@ -255,7 +322,12 @@
                 handleCurrentChange,
                 dialogInfo,
                 close,
-                deleteAll
+                deleteAll,
+                loading,
+                toData,
+                edit_dialogInfo,
+                handleSelectionChange,
+                handleEditInfo,
             }
         }
     }

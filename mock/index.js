@@ -1,4 +1,5 @@
-require('./user')
+require('./user');
+require('./news');
 import Mock from 'mockjs';
 
 Mock.setup({

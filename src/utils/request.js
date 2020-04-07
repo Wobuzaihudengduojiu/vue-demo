@@ -9,6 +9,7 @@ const request=axios.create({
 request.interceptors.request.use(function (config) {
     // Do something before request is sent
 
+    //添加token
 
 
     return config;

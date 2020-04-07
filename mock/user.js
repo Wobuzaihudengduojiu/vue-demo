@@ -20,7 +20,7 @@ Mock.mock('/user/login', 'post', (config) => {
             username: obj.username,
         }
     }
-})
+});
 
 Mock.mock('/user/register', 'post', {
     'status': 200,

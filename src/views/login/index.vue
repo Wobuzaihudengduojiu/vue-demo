@@ -54,12 +54,14 @@
     import {filter, validateEmail, validatePwd, validateVcode} from "@u/validate";
     import {reactive, ref} from '@vue/composition-api';
     import {getMsg, register} from '@/api/login';
-    import sha1 from 'js-sha1'
+    import sha1 from 'js-sha1';
+
 
     export default {
         name: 'login',
         //放置data中的数据，生命周期，自定义函数
         setup(props, {refs, root},) {
+
 
             //验证密码
             let validatePass2 = (rule, value, callback) => {
@@ -170,7 +172,7 @@
                                 username: ruleForm.username,
                                 password: sha1(ruleForm.password),
                                 age: ruleForm.age,
-                            }
+                            };
 
                             root.$store.dispatch('logins/Login', data).then((resp) => {
 
@@ -188,7 +190,7 @@
                                 username: ruleForm.username,
                                 password: sha1(ruleForm.password),
                                 age: ruleForm.age,
-                            }
+                            };
 
                             register(data).then((resp) => {
 

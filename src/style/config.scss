@@ -11,7 +11,7 @@ $secColor: #f56c56c;
 }
 
 @mixin labelDom($align,$width,$line-height:"normal") {
-  label {
+    label {
     float: left;
     line-height: $line-height+px;
     width: $width+px;

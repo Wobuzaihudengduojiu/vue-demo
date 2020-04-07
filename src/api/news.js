@@ -1,7 +1,21 @@
-//列表
+import request from '@u/request';
 
-//新增
 
-//编辑
+//添加一级类目
+export function addFirstCategory(data) {
 
-//删除
+    return request({
+        url:'/news/addCategory',
+        method:'post',
+        data
+    })
+}
+
+//获取所有类目
+export function getAllCategory() {
+
+    return request({
+        url:'/news/getCategory',
+        method: 'get',
+    })
+}

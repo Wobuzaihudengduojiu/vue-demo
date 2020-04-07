@@ -25,6 +25,7 @@ const routes = [
     {
         path:'/index',
         name:'Index',
+        hidden:false,
         redirect:'index/1',
         meta:{
             name:'控制台',
@@ -35,6 +36,7 @@ const routes = [
             {
                 path:'/index/1',
                 name:'Index',
+                hidden:false,
                 meta:{
                     name:'首页',
                 },
@@ -45,6 +47,7 @@ const routes = [
     {
         path:'/news',
         name:'News',
+        hidden:false,
         meta:{
             name:'信息管理',
             icon:'credits',
@@ -54,6 +57,7 @@ const routes = [
             {
                 path:'/newsIndex',
                 name:'NewsIndex',
+                hidden:false,
                 meta:{
                     name:'信息列表',
                 },
@@ -62,16 +66,29 @@ const routes = [
             {
                 path:'/newsCategory',
                 name:'NewsCategory',
+                hidden:false,
                 meta:{
                     name:'信息分类',
                 },
                 component:()=>import("@v/news/category.vue"),
+            },
+            {
+                // path: '/infoCategory/:id',
+                path: '/infoCategory',
+                name: 'InfoCategory',
+                hidden: true,
+                meta: {
+                    name: '信息分类',
+                },
+                component: () => import("@v/news/infoCategory.vue"),
             }
+
         ]
     },
     {
         path:'/user',
         name:'User',
+        hidden:false,
         meta:{
             name:'用户管理',
             icon:'filter',
@@ -81,6 +98,7 @@ const routes = [
             {
                 path:'/userIndex',
                 name:'UserIndex',
+                hidden:false,
                 meta:{
                     name:'用户列表',
                 },
